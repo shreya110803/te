@@ -9,3 +9,4 @@ for i in range(2):
     camera.capture('/home/pi/Desktop/new%s.jpg'%i)
 camera.stop_preview()
 
+# raspistill -o say5.jpg
