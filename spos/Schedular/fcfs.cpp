@@ -1,73 +1,107 @@
-#include<iostream>
-#include<string.h>
+//--------------------------------FCFS--------------------------------
+
+#include <iostream>
 using namespace std;
-
-void FCFS(int n,int BT[],string p[])
-{
-    int Arrival_time=0,Finish_time[10],TA[10],WT[10];
-    float cnt=0,count=0;
-    for (int i = 0; i<n; i++)
-    {
-        if(i==0)
-        {   Finish_time[i]=BT[i];
-            TA[i]=Finish_time[i]-Arrival_time;
-        }
-        else
-        {
-            Finish_time[i]=BT[i]+Finish_time[i-1];
-            TA[i]=Finish_time[i]-Arrival_time;
-        }
-    }
-    cout<<endl;
-    for(int i=0;i<n;i++)
-    {
-        cout<<"  "<<p[i]<<"  ";
-    }
-    cout<<endl<<"0";
-    for(int i=0;i<n;i++)
-    {
-        cout<<"    "<<TA[i];
-    }
-    cout<<endl;
-    cout<<"TURN-AROUND TIME "<<endl;
-    for (int i = 0; i<n; i++)
-    {
-        cout<<"Turn-around time of "<<p[i]<<"= "<<TA[i]<<" msec"<<endl;
-    }
-    for (int i = 0; i<n; i++)
-    {
-        cnt+=TA[i];
-    }
-    cnt=cnt/n;
-    cout<<"Average Turn-around time of = "<<cnt<<" msec"<<endl;
-    cout<<endl;
-    for (int i = 0; i<n; i++)
-    {
-        WT[i]=TA[i]-BT[i];
-        cout<<"Waiting time of "<<p[i]<<"= "<<WT[i]<<" msec"<<endl;
-    }
-    for (int i = 0; i<n; i++)
-    {
-        count+=WT[i];
-    }
-    count=count/n;
-    cout<<"Average Waiting time of = "<<count<<" msec"<<endl;
-}
-
+#define max 10
 int main()
 {
-    int n, BT[10];
-    string p[10];
-    cout<<"Enter the number of process: ";
-    cin>>n;
-    for (int i = 0; i<n; i++)
+
+    int P[max], CT[max], AT[max], BT[max], TAT[max], WT[max];
+    float AvgWT = 0, AvgTAT = 0, Pno;
+
+    cout << "\n ---- ---- MENU ---- ----\n";
+    cout << "Enter number of processes: ";
+
+    cin >> Pno;
+
+    for (int i = 0; i < Pno; i++)
     {
-        cout<<"Enter the process name: ";
-        cin>>p[i];
-        cout<<"Enter the Burst time :";
-        cin>>BT[i];
+
+        P[i] = i + 1;
+
+        cout << "Enter Arrival time of P" << i + 1;
+
+        cin >> AT[i];
+
+        cout << "Enter Burst time of P" << i + 1;
+
+        cin >> BT[i];
     }
-    
-    FCFS(n,BT,p);
+
+    cout << "\nProcess No.\tArrival Time\tBurst Time";
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        cout << "\n"
+             << P[i] << "\t\t" << AT[i] << "\t\t" << BT[i];
+    }
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        for (int j = i + 1; j < Pno; j++)
+        {
+
+            if (AT[i] > AT[j])
+            {
+
+                swap(AT[i], AT[j]);
+
+                swap(BT[i], BT[j]);
+
+                swap(P[i], P[j]);
+            }
+        }
+    }
+
+    CT[0] = 0;
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        CT[i + 1] = CT[i] + BT[i];
+
+        TAT[i] = CT[i + 1] - AT[i];
+
+        WT[i] = TAT[i] - BT[i];
+    }
+
+    cout << "\n --------  GANTT CHART  --------\n";
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        cout << "|  P" << P[i] << "\t";
+    }
+
+    cout << "|\n";
+
+    for (int i = 0; i <= Pno; i++)
+    {
+
+        cout << CT[i] << "\t";
+    }
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        cout << "\nWaiting time for P" << P[i] << ": " << WT[i];
+
+        AvgWT += WT[i];
+    }
+
+    cout << "\nAvg WT:   " << AvgWT / Pno;
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        cout << "\nTurn Around time for P" << P[i] << ": " << TAT[i];
+
+        AvgTAT += TAT[i];
+    }
+
+    cout << "\nAvg TAT:   " << AvgTAT / Pno;
+
     return 0;
 }
