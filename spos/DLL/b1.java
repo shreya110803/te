@@ -85,3 +85,11 @@ class B1 {
     }
 
 }
+
+// Compilation Command
+// > javac B1.java
+// > javah -jni B1
+// > locate jni.h
+
+// >gcc -I/usr/lib/jvm/java-11-openjdk-amd64/include -I/usr/lib/jvm/java-11-openjdk-amd64/include/linux -o libB1.so -shared -fPIC B1.c
+// >java -Djava.library.path=. B1
