@@ -1,131 +1,129 @@
-#include<iostream>
+//----------------Round Robin----------------------------
+
+#include <iostream>
+
 using namespace std;
-class rr
-{
-    public:
-        string pr[20];
-        int n,tq,bt[20];
-        string temp[20];
-        int tempbt[20],ttime[20];
-        int k;
-        void ganttchart(string pr[], int bt[], int tq, int n)
-        {
-            
-            string remainpr[20];
-            int remainbt[20];
-            int btime;
-            tempbt[0]=0;
-            for(int i=0;i<n;i++)
-            {
-                remainpr[i]=pr[i];
-            }
-            for(int i=0;i<n;i++)
-            {
-                remainbt[i]=bt[i];
-            }
-            for(int i=0,j=n;i!=j;i++)
-            {
-                if(remainbt[i]<=tq)
-                {
-                    temp[i]=remainpr[i];
-                    tempbt[i+1]=tempbt[i]+remainbt[i];
-                }
-                else
-                {
-                    btime=remainbt[i]-tq;     
-                    temp[i]=remainpr[i];
-                    tempbt[i+1]=tempbt[i]+tq;
-                    remainpr[j]=remainpr[i];
-                    remainbt[j]=btime;
-                    j++;
-                    k=j;
 
-                }
-            
-            }
-            cout<<"\n Gantt Chart"<<endl;
-            cout<<"   ";
-            for(int i=0;i<k;i++)
-            {
-                cout<<temp[i]<<"      ";
-            }
-            cout<<endl;
-            for(int i=0;i<=k;i++)
-            {
-                cout<<tempbt[i]<<"      ";
-            }
-        }
-        void turnaround(string pr[], int n)
-        {
-            int AT =0;
-            int tt=0;
-            int sum=0;
-            cout<<"\n"<<endl;
-            for(int i=0;i<n;i++)
-            {
-                for(int j=0;j<k;j++)
-                {
-                    if(pr[i]==temp[j])
-                    {
-                        tt=tempbt[j+1]-AT;
-                    }
-                }
-                ttime[i]=tt;
-                sum=sum+tt;
-                cout<<"Turn Around time of "<<pr[i]<<" is:"<<tt<<endl;
-
-            }
-            cout<<"\nAverage turnaround time ="<<sum/n;
-        }
-        void waiting(string pr[], int bt[], int n)
-        {
-            int sum1=0;
-            int wt;
-            cout<<"\n"<<endl;
-            for(int i=0;i<n;i++)
-            {
-                wt=ttime[i]-bt[i];
-                cout<<"Waiting time of "<<pr[i]<<" is: "<<wt<<endl;
-                sum1=sum1+wt;
-
-            }
-            cout<<"\n Average waiting time = "<<sum1/n;
-        }
-    
-    
-
-};
-//void rr::ganttchart(string pr[], int bt[], int tq, int n)
+#define max 20
 
 int main()
 {
-    rr obj;
 
-    string pr[20];
-    int n,tq,bt[20];
-    cout<<"ROUND ROBIN"<<endl;
-    cout<<"enter total number of process: ";
-    cin>>n;
-    for(int i=0;i<n;i++)
+    int P[max], CT[max], AT[max], BT[max], TAT[max], WT[max], RT[max];
+    int TQ, time = 0, curr_time = 0, completed = 0;
+
+    float AvgWT = 0, AvgTAT = 0, Pno;
+
+    int exe_ord[max], exe_time[max], exe_index = 0;
+
+    int x = 0;
+
+    cout << "\n ---- ---- MENU ---- ----\n";
+
+    cout << "Enter number of processes: ";
+
+    cin >> Pno;
+
+    cout << "Enter Time Quantum: ";
+
+    cin >> TQ;
+
+    for (int i = 0; i < Pno; i++)
     {
-        cout<<"\nEnter processes["<<i+1<<"] : ";
-        cin>>pr[i];
+
+        P[i] = i + 1;
+
+        cout << "Enter Arrival time of P" << i + 1;
+
+        cin >> AT[i];
+
+        cout << "Enter Burst time of P" << i + 1;
+
+        cin >> BT[i];
+
+        RT[i] = BT[i];
     }
-    for(int i=0;i<n;i++)
+
+    cout << "\nProcess No.\tArrival Time\tBurst Time";
+
+    for (int i = 0; i < Pno; i++)
     {
-        cout<<"\nEnter B. Time of "<<pr[i]<<" : ";
-        cin>>bt[i];
+
+        cout << "\n"
+             << P[i] << "\t\t" << AT[i] << "\t\t" << BT[i];
     }
-    cout<<"\nenter time quantum: ";
-    cin>>tq;
-    cout<<"\nProceses"<<"\tB.Time"<<"\tTime quantum"<<endl;
-    for(int i=0;i<n;i++)
+
+    while (completed < Pno)
     {
-        cout<<pr[i]<<"\t\t"<<bt[i]<<"\t\t"<<tq<<endl;
+
+        for (int i = 0; i < Pno; i++)
+        {
+
+            if (AT[i] <= curr_time && RT[i] > 0)
+            {
+
+                time = min(RT[i], TQ);
+
+                curr_time += time;
+
+                RT[i] -= time;
+
+                exe_ord[exe_index] = P[i];
+
+                exe_time[exe_index] = curr_time;
+
+                exe_index++;
+
+                if (RT[i] == 0)
+                {
+
+                    CT[i] = curr_time;
+
+                    TAT[i] = CT[i] - AT[i];
+
+                    WT[i] = TAT[i] - BT[i];
+
+                    completed++;
+                }
+            }
+        }
     }
-    obj.ganttchart(pr,bt,tq,n);
-    obj.turnaround(pr,n);
-    obj.waiting(pr,bt,n);
+
+    cout << "\n --------  GANTT CHART  --------\n";
+
+    for (int i = 0; i < exe_index; i++)
+    {
+
+        cout << "|  P" << exe_ord[i] << "\t";
+    }
+
+    cout << "|\n0\t";
+
+    for (int i = 0; i < exe_index; i++)
+    {
+
+        cout << exe_time[i] << "\t";
+    }
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        cout << "\nWaiting time for P" << P[i] << ": " << WT[i];
+
+        AvgWT += WT[i];
+    }
+
+    cout << "\nAvg WT:   " << AvgWT / Pno;
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        cout << "\nTurn Around time for P" << P[i] << ": " << TAT[i];
+
+        AvgTAT += TAT[i];
+    }
+
+    cout << "\nAvg TAT:   " << AvgTAT / Pno;
 
     return 0;
 }
