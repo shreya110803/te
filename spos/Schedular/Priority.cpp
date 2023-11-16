@@ -1,119 +1,148 @@
+//----------------------Priority-------------------------------
+
 #include <iostream>
 using namespace std;
+#define max 10
+int main()
+{
+    int P[max], CT[max], AT[max], BT[max], TAT[max], WT[max], is_comp[max], ST[max], Priority[max];
+    int index, curr_time = 0, completed = 0;
 
-class PriorityQueue {
-private:
-    struct Node {
-        int data,priority;
-        string p;
-    }*arr;
+    float AvgWT = 0, AvgTAT = 0, Pno;
 
-    int maxCapacity,size;
+    int x = 0;
 
-public:
-    PriorityQueue(int maxCapacity){
-        size=0; 
-        arr = new Node[maxCapacity];
-    }
+    cout << "\n ---- ---- MENU ---- ----\n";
 
-    ~PriorityQueue() {
-        delete[] arr;
-    }
+    cout << "Enter number of processes: ";
 
-    void enqueue(int Burst_time, int priority,string name) {
-        if (size >= maxCapacity) {
-            cout << "Queue is full. Cannot enqueue." << endl;
-            return;
-        }
+    cin >> Pno;
 
-        int i = size;
-
-        // Find the appropriate position for the new element based on priority
-        while (i > 0 && priority < arr[i - 1].priority) {
-            arr[i] = arr[i - 1];
-            i--;
-        }
-
-        arr[i].data = Burst_time;
-        arr[i].p = name;
-        arr[i].priority = priority;
-        size++;
-    }
-    
-    int dequeue() {
-        float cnt=0,count=0;
-        if (isEmpty()) {
-            cout << "Queue is empty. Cannot dequeue." << endl;
-            return -1; // Return a default value indicating failure
-        }
-        cout<<"GANTT-CHART"<<endl<<"Arrival time=0"<<endl;
-        int d=0;
-        for(int i=0;i<size;i++)
-        {
-            cout<<"  "<<arr[i].p<<"  ";
-        }
-        cout<<endl<<"0";
-        for(int i=0;i<size;i++)
-        {
-            d+=arr[i].data;
-            cout<<"    "<<d;
-        }
-        cout<<endl;
-        cout<<"Turn-Around Time"<<endl;
-        int a=0,TA[10];
-        for(int i=0;i<size;i++)
-        {
-            a+=arr[i].data;
-            TA[i]=a;
-            cout<<"Turn-Around time for process "<<arr[i].p<<" = "<<a<<endl;
-        }
-        for (int i = 0; i<size; i++)
-        {
-            cnt+=TA[i];
-        }
-        cnt=cnt/size;
-        cout<<"Average Turn-around time of = "<<cnt<<" msec"<<endl;
-        cout<<"Waiting Time"<<endl;
-        int b=0,WT[10];
-        for(int i=0;i<size;i++)
-        {
-            b+=arr[i].data;
-            WT[i]=b-arr[i].data;
-            cout<<"Waiting time for process "<<arr[i].p<<" = "<<WT[i]<<endl;
-        }
-        for (int i = 0; i<size; i++)
-        {
-            count+=WT[i];
-        }
-        count=count/size;
-        cout<<"Average Waiting time of = "<<count<<" msec"<<endl;
-        return 0;
-    }
-
-    bool isEmpty() const {
-        return size == 0;
-    }
-};
-
-int main() {
-    int n,Burst_time,prio;
-    string name;
-    PriorityQueue pq(10);
-
-    cout<<"Enter the number of processes : ";
-    cin>>n;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < Pno; i++)
     {
-        cout<<"Enter the name of process :";
-        cin>>name;
-        cout<<"Enter the Burst time of process :";
-        cin>>Burst_time;
-        cout<<"Enter the priority of process :";
-        cin>>prio;
-        pq.enqueue(Burst_time,prio,name);
+
+        P[i] = i + 1;
+
+        cout << "Enter Arrival time of P" << i + 1;
+
+        cin >> AT[i];
+
+        cout << "Enter Burst time of P" << i + 1;
+
+        cin >> BT[i];
+
+        cout << "Enter Priority of P" << i + 1;
+
+        cin >> Priority[i];
     }
-    
-        pq.dequeue();
+
+    cout << "\nPriority\tProcess No.\tArrival Time\tBurst Time";
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        cout << "\n"
+             << Priority[i] << "\t\t" << P[i] << "\t\t" << AT[i] << "\t\t" << BT[i];
+    }
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        is_comp[i] = 0;
+    }
+
+    cout << "\n --------  GANTT CHART  --------\n";
+
+    while (completed < Pno)
+    {
+
+        int maxP = -1;
+
+        for (int i = 0; i < Pno; i++)
+        {
+
+            if (AT[i] <= curr_time && is_comp[i] == 0)
+            {
+
+                if (Priority[i] > maxP)
+                {
+
+                    maxP = Priority[i];
+
+                    index = i;
+                }
+
+                if (Priority[i] == maxP)
+                {
+
+                    if (AT[i] < AT[index])
+                    {
+
+                        maxP = Priority[i];
+
+                        index = i;
+                    }
+                }
+            }
+        }
+        if (maxP == -1)
+        {
+
+            curr_time++;
+        }
+
+        else
+        {
+
+            ST[index] = curr_time;
+
+            CT[x] = ST[index] + BT[index];
+
+            TAT[index] = CT[x] - AT[index];
+
+            cout << "curr --->" << curr_time;
+
+            WT[index] = TAT[index] - BT[index];
+
+            is_comp[index] = 1;
+
+            completed++;
+
+            curr_time = CT[x];
+
+            x++;
+
+            cout << "|  P" << P[index] << "\t";
+        }
+    }
+
+    cout << "|\n0\t";
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        cout << CT[i] << "\t";
+    }
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        cout << "\nWaiting time for P" << P[i] << ": " << WT[i];
+
+        AvgWT += WT[i];
+    }
+
+    cout << "\nAvg WT:   " << AvgWT / Pno;
+
+    for (int i = 0; i < Pno; i++)
+    {
+
+        cout << "\nTurn Around time for P" << P[i] << ": " << TAT[i];
+
+        AvgTAT += TAT[i];
+    }
+
+    cout << "\nAvg TAT:   " << AvgTAT / Pno;
 
     return 0;
 }
