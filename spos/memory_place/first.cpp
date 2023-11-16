@@ -1,131 +1,53 @@
-#include<iostream>
+
+// ----------------First Fit-----------------
+
+#include<bits/stdc++.h>
 using namespace std;
+
+void firstFit(int blockSize[], int m, int processSize[], int n)
+{	
+	int allocation[n];
+	memset(allocation, -1, sizeof(allocation));
+	for (int i = 0; i < n; i++){
+		for (int j = 0; j < m; j++){
+			if (blockSize[j] >= processSize[i]){	
+				allocation[i] = j;
+				blockSize[j] -= processSize[i];
+				break;
+			}
+		}
+	}
+	cout << "\nProcess No.\tProcess Size\tBlock no.\n";
+	for (int i = 0; i < n; i++){
+		cout << " " << i+1 << "\t\t"<< processSize[i] << "\t\t";
+		if (allocation[i] != -1)
+			cout << allocation[i] + 1;
+		else
+			cout << "Not Allocated";
+		cout << endl;
+	}
+}
 int main()
 {
-	cout<<"\n\n......FIRST FIT......"<<endl;
-	cout<<"Enter total number of processes"<<endl;
-	int n;
-	cin>>n;
-    cout<<"enter total number of partitions"<<endl;
-    int pn;
-    cin>>pn;
-	string pr[n];
-	int size[n];
-	int block[n];
-	int partion[pn];
-	string fit[pn];
-	int alloc[pn];
-	int addr[pn+1];
-	float total=0;
-    float used=0;
-	addr[0]=0;
-	for(int i=0;i<n;i++)
-	{
-		block[i]=-1;
-	}
-	//cout<<"Enter memory partition"<<endl;
-	for(int i=0;i<pn;i++)
-	{
-		partion[i]=i+1;
-	}
-	
-	//cout<<"Enter memory partition"<endl;
-	for(int i=0;i<pn;i++)
-	{
-		fit[i]='E';
-	}
-
-    //cout<<"Enter memory partition size"<<endl;
-	for(int i=0;i<pn;i++)
-	{
-		cout<<"Enter partition size of partition["<<i+1<<"]: ";
-		cin>>alloc[i];	
-	}
-	
-	cout<<"Enter processes"<<endl;
-	for(int i=0;i<n;i++)
-	{
-		cout<<"Enter pr["<<i+1<<"]: ";
-		cin>>pr[i];	
-	}
-	
-	cout<<"Enter processes size"<<"k"<<endl;
-	for(int i=0;i<n;i++)
-	{
-		cout<<"Enter size of pr["<<i+1<<"]: ";
-		cin>>size[i];
-	}
-	
-	for(int i=1;i<pn+1;i++)
-	{
-		addr[i]=addr[i-1]+alloc[i-1];
-		total=addr[i];
-	}
-	
-    int p=0;
-    int select[pn];
-    for(int j=0;j<pn;j++)
+	// int blockSize[] = {10, 20, 30, 40, 50};
+	// int processSize[] = {8, 17, 38, 60};
+	int m, n;
+    cout << "Enter the number of blocks: ";
+    cin >> m;
+    int blockSize[m];
+    cout << "Enter the block sizes:\n";
+    for (int i = 0; i < m; i++)
     {
-        select[j]=0;
+        cin >> blockSize[i];
     }
-    
-	while(p<n)
+    cout << "Enter the number of processes: ";
+    cin >> n;
+    int processSize[n];
+    cout << "Enter the process sizes:\n";
+    for (int i = 0; i < n; i++)
     {
-        for(int i=0;i<pn;i++)
-        {
-            if(alloc[i]>=size[p] && select[i]!=1)
-            {
-                fit[i]=pr[p];
-				used=used+size[p];
-				block[p]=i+1;
-                select[i]=1;
-                break;
-            }
-        }
-        p++;
+        cin >> processSize[i];
     }
-    cout<<"processes"<<"\t"<<"size"<<"\t"<<"Partition no."<<endl;
-	for(int i=0;i<n;i++)
-	{
-		cout<<pr[i]<<"\t\t"<<size[i]<<"k\t"<<block[i]<<endl;
-			
-	}cout<<endl;
-	cout<<"partition"<<"\t\t"<<"Allocation"<<"\t\t"<<"Address"<<endl;
-	int m=0;
-	while(m<pn+1)
-	{
-		for(int i=m;i<m+1;i++)
-		{
-            if(i<pn)
-            {
-                cout<<partion[i]<<"\t\t\t";
-            }
-            else{
-                cout<<"\t\t\t";
-            }
-			
-		}
-		for(int j=m;j<m+1;j++)
-		{
-            if(m<pn)
-            {
-                cout<<fit[j]<<"   ["<<alloc[j]<<"k]\t\t";
-            }
-            else{
-                cout<<"\t\t\t";
-            }
-			
-		}
-		for(int k=m;k<m+1;k++)
-		{
-			cout<<addr[k]<<"k";
-		}
-		cout<<endl;
-		m++;
-		
-	}
-	cout<<"\n memory used="<<used;
-    cout<<"\n total memory="<<total;
-    cout<<"\n Memory utlized= "<<used/total;
-	return 0;	
+    firstFit(blockSize, m, processSize, n);
+	return 0 ;
 }
