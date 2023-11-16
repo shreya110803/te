@@ -1,139 +1,64 @@
+
+// --------Best Fit-------
+
 #include<iostream>
 using namespace std;
-int main()
-{
-    cout<<"\n\n......BEST FIT......"<<endl;
-	cout<<"Enter total number of processes"<<endl;
-	int n;
-	cin>>n;
-    cout<<"enter total number of partitions"<<endl;
-    int pn;
-    cin>>pn;
-	string pr[n];
-	int size[n];
-	int block[n];
-	int partion[pn];
-	string fit[pn];
-	int alloc[pn];
-	int addr[pn+1];
-    float total=0;
-    float used=0;
-	addr[0]=0;
-	for(int i=0;i<n;i++)
-	{
-		block[i]=-1;
-	}
-	//cout<<"Enter memory partition"<<endl;
-	for(int i=0;i<pn;i++)
-	{
-		partion[i]=i+1;
-	}
-	
-	//cout<<"Enter memory partition"<endl;
-	for(int i=0;i<pn;i++)
-	{
-		fit[i]='E';
-	}
 
-    //cout<<"Enter memory partition size"<<endl;
-	for(int i=0;i<pn;i++)
-	{
-		cout<<"Enter partition size of partition["<<i+1<<"]: ";
-		cin>>alloc[i];	
-	}
-	
-	cout<<"Enter processes"<<endl;
-	for(int i=0;i<n;i++)
-	{
-		cout<<"Enter pr["<<i+1<<"]: ";
-		cin>>pr[i];	
-	}
-	
-	cout<<"Enter processes size"<<endl;
-	for(int i=0;i<n;i++)
-	{
-		cout<<"Enter size of pr["<<i+1<<"]: ";
-		cin>>size[i];
-	}
-	
-	for(int i=1;i<pn+1;i++)
-	{
-		addr[i]=addr[i-1]+alloc[i-1];
-        total=addr[i];
-	}
-	
-    int p=0;
-    int select[pn];
-    for(int j=0;j<pn;j++)
-    {
-        select[j]=0;
-    }
-    while(p<n)
-    {
-        int temp=0;
-        int min=9999;
-        for(int i=0;i<pn;i++)
-        {
-            if( alloc[i]-size[p]>=0 && alloc[i]-size[p]<min  && select[i]!=1)
-            {
-                min=(alloc[i]-size[p]);
-                temp=i;
+void bestFit(int blockSize[], int m, int processSize[], int n) {
+    int allocation[n];
+    for (int i = 0; i < n; i++)
+        allocation[i] = -1;
+    for (int i = 0; i < n; i++) {
+        int bestIdx = -1;
+        for (int j = 0; j < m; j++) {
+            if (blockSize[j] >= processSize[i]) {
+                if (bestIdx == -1)
+                    bestIdx = j;
+                else if (blockSize[bestIdx] > blockSize[j])
+                    bestIdx = j;
             }
         }
-        if(temp!=0)
-        {
-            fit[temp]=pr[p];
-            used=used+size[p];
-			block[p]=temp+1;
-            select[temp]=1;
+        if (bestIdx != -1) {
+            allocation[i] = bestIdx;
+            blockSize[bestIdx] -= processSize[i];
         }
-        p++;
-
-    
     }
-     cout<<"processes"<<"\t"<<"size"<<"\t"<<"Partition no."<<endl;
-	for(int i=0;i<n;i++)
-	{
-		cout<<pr[i]<<"\t\t"<<size[i]<<"k\t"<<block[i]<<endl;
-			
-	}cout<<endl;
-	cout<<"partition"<<"\t\t"<<"Allocation"<<"\t\t"<<"Address"<<endl;
-	int m=0;
-	while(m<pn+1)
-	{
-		for(int i=m;i<m+1;i++)
-		{
-            if(i<pn)
-            {
-                cout<<partion[i]<<"\t\t\t";
-            }
-            else{
-                cout<<"\t\t\t";
-            }
-			
-		}
-		for(int j=m;j<m+1;j++)
-		{
-            if(m<pn)
-            {
-                cout<<fit[j]<<"    ["<<alloc[j]<<"]\t\t";
-            }
-            else{
-                cout<<"\t\t        ";
-            }
-			
-		}
-		for(int k=m;k<m+1;k++)
-		{
-			cout<<addr[k]<<"";
-		}
-		cout<<endl;
-		m++;
-		
-	}
-    cout<<"\n memory used="<<used;
-    cout<<"\n total memory="<<total;
-    cout<<"\n Memory utlized= "<<used/total;
-
-	return 0;	
+    cout << "\nProcess No.\tProcess Size\tBlock no.\n";
+    for (int i = 0; i < n; i++) {
+        cout << " " << i + 1 << "\t\t" << processSize[i] << "\t\t";
+        if (allocation[i] != -1)
+            cout << allocation[i] + 1;
+        else
+            cout << "Not Allocated";
+        cout << endl;
+    }
 }
+
+// Driver Method
+int main() {
+    int m, n;
+
+    cout << "Enter the number of blocks: ";
+    cin >> m;
+
+    int blockSize[m];
+    cout << "Enter the block sizes: ";
+    for (int i = 0; i < m; i++) {
+        cin >> blockSize[i];
+    }
+
+    cout << "Enter the number of processes: ";
+    cin >> n;
+
+    int processSize[n];
+    cout << "Enter the process sizes: ";
+    for (int i = 0; i < n; i++) {
+        cin >> processSize[i];
+    }
+
+    bestFit(blockSize, m, processSize, n);
+
+    return 0;
+}
+// int blockSize[] = {100, 500, 200, 300, 600};
+// int processSize[] = {212, 417, 112, 426};
